@@ -35,7 +35,7 @@ const login = async (req, res) => {
     }
 
     const isPasswordValid = await existedUser.comparePassword(password);
-    if (isValidPassword) {
+    if (isPasswordValid) {
       res.status(200).json({
         message: "login successfull!",
         token: existedUser.generateToken(),
