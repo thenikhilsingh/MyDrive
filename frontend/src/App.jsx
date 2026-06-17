@@ -1,5 +1,11 @@
+import { Outlet } from "react-router-dom";
+
 function App() {
-  return <>MyDrive</>;
+  return (
+    <>
+      <Outlet />
+    </>
+  );
 }
 
 export default App;
