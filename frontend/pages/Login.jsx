@@ -1,7 +1,40 @@
-import { Link } from "react-router-dom";
-import { CloudUpload, Eye } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { CloudUpload, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/login`,
+        formData,
+      );
+      if (response.status === 200) {
+        setFormData({
+          email: "",
+          password: "",
+        });
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden">
@@ -25,13 +58,16 @@ export default function Login() {
           <div className="w-full max-w-md border border-gray-200 rounded-xl p-8 shadow-sm">
             <h2 className="text-2xl font-semibold mb-6">Login</h2>
 
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium mb-2">Email</label>
                 <input
                   type="email"
                   placeholder="Enter your email"
                   className="w-full border rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -42,16 +78,20 @@ export default function Login() {
 
                 <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     className="w-full border rounded-lg px-4 py-3 pr-12 outline-none focus:border-blue-500"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
                   />
 
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    onClick={() => setShowPassword(showPassword ? false : true)}
                   >
-                    <Eye size={18} />
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
@@ -67,7 +107,10 @@ export default function Login() {
                 </button>
               </div>
 
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition">
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition"
+              >
                 Login
               </button>
 
