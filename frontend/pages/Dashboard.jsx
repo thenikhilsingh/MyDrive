@@ -1,5 +1,132 @@
-import React from "react";
+import React, { useState } from "react";
+import { Search, Upload } from "lucide-react";
+import { Outlet } from "react-router-dom";
+
+import Sidebar from "../components/Sidebar";
+import FolderCard from "../components/FolderCard";
+import FileTable from "../components/FileTable";
+
+import CreateFolderModal from "../components/CreateFolderModal";
+import UploadFileModal from "../components/UploadFileModal";
+
+const folders = [
+  {
+    id: 1,
+    name: "Documents",
+    items: 12,
+  },
+  {
+    id: 2,
+    name: "Images",
+    items: 18,
+  },
+  {
+    id: 3,
+    name: "Projects",
+    items: 7,
+  },
+  {
+    id: 4,
+    name: "Videos",
+    items: 9,
+  },
+];
+
+const files = [
+  {
+    id: 1,
+    name: "Resume.pdf",
+    type: "File",
+    size: "2.4 MB",
+    uploaded: "16 Jun 2024",
+  },
+  {
+    id: 2,
+    name: "Project Proposal.docx",
+    type: "File",
+    size: "1.3 MB",
+    uploaded: "15 Jun 2024",
+  },
+  {
+    id: 3,
+    name: "Photo.png",
+    type: "File",
+    size: "2.1 MB",
+    uploaded: "14 Jun 2024",
+  },
+];
 
 export default function Dashboard() {
-  return <div>Dashboard</div>;
+  return (
+    <div className="min-h-screen bg-[#f8fafc] flex">
+      <Sidebar />
+
+      <main className="flex-1 p-4 md:p-6">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
+
+function DashboardHome() {
+  const [showCreateFolder, setShowCreateFolder] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+
+  return (
+    <>
+      <div className="space-y-6">
+        {/* Top Bar */}
+        <div className="flex flex-col md:flex-row gap-4 justify-between">
+          <div className="relative w-full md:w-96">
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+
+            <input
+              type="text"
+              placeholder="Search files and folders..."
+              className="w-full border border-gray-200 rounded-lg py-3 pl-10 pr-4 outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg flex items-center justify-center gap-2"
+          >
+            <Upload size={18} />
+            Upload File
+          </button>
+        </div>
+
+        {/* New Folder */}
+        <button
+          onClick={() => setShowCreateFolder(true)}
+          className="border border-blue-500 text-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-50"
+        >
+          + New Folder
+        </button>
+
+        {/* Folder Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
+          {folders.map((folder) => (
+            <FolderCard key={folder.id} folder={folder} />
+          ))}
+        </div>
+
+        {/* File Table */}
+        <FileTable files={files} />
+      </div>
+
+      {showCreateFolder && (
+        <CreateFolderModal closeModal={() => setShowCreateFolder(false)} />
+      )}
+
+      {showUploadModal && (
+        <UploadFileModal closeModal={() => setShowUploadModal(false)} />
+      )}
+    </>
+  );
+}
+
+export { DashboardHome };
