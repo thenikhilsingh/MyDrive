@@ -9,11 +9,11 @@ import {
   Cloud,
   User,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const [openSidebar, setOpenSidebar] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <>
       {/* Mobile Button */}
@@ -95,7 +95,10 @@ export default function Sidebar() {
 
         {/* Logout */}
         <div className="mt-auto p-4 border-t">
-          <button className="flex items-center gap-3 text-gray-600">
+          <button
+            onClick={() => navigate("/logout")}
+            className="flex items-center gap-3 text-gray-600"
+          >
             <LogOut size={18} />
             Logout
           </button>

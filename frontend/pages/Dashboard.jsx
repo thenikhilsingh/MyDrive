@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Search, Upload } from "lucide-react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
 import FolderCard from "../components/FolderCard";
@@ -8,6 +8,7 @@ import FileTable from "../components/FileTable";
 
 import CreateFolderModal from "../components/CreateFolderModal";
 import UploadFileModal from "../components/UploadFileModal";
+import { AuthContext } from "../src/App";
 
 const folders = [
   {
@@ -57,6 +58,12 @@ const files = [
 ];
 
 export default function Dashboard() {
+  const { isLoggedIn } = useContext(AuthContext);
+
+  if (!isLoggedIn) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
       <Sidebar />
