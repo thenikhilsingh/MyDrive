@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { CloudUpload, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "../src/App";
 
 export default function Signup() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { storeTokenInLS } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,6 +29,7 @@ export default function Signup() {
       );
       console.log(response.data);
       if (response.status === 201) {
+        storeTokenInLS(response.data.token);
         setFormData({
           name: "",
           email: "",
