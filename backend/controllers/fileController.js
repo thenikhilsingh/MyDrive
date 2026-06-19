@@ -12,6 +12,20 @@ const getFiles = async (req, res) => {
   }
 };
 
+const getFolderFiles = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const loggedInUserId = req.user._id;
+    const folderFiles = await File.find({
+      folder: id,
+      uploadedBy: loggedInUserId,
+    });
+    res.status(200).json({ folderFiles });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const uploadFile = async (req, res) => {
   try {
     // Check file exists
@@ -69,4 +83,4 @@ const deleteFile = async (req, res) => {
   }
 };
 
-module.exports = { getFiles, uploadFile, deleteFile };
+module.exports = { getFiles, getFolderFiles, uploadFile, deleteFile };

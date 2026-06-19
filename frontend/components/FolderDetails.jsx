@@ -65,36 +65,25 @@ export default function FolderDetails() {
   };
 
   const navigate = useNavigate();
-  const files = [
-    {
-      id: 1,
-      name: "Resume.pdf",
-      type: "File",
-      size: "2.4 MB",
-      uploaded: "16 Jun 2024",
-    },
-    {
-      id: 2,
-      name: "Project Proposal.docx",
-      type: "File",
-      size: "1.3 MB",
-      uploaded: "15 Jun 2024",
-    },
-    {
-      id: 3,
-      name: "Notes.txt",
-      type: "File",
-      size: "800 B",
-      uploaded: "14 Jun 2024",
-    },
-    {
-      id: 4,
-      name: "Photo.png",
-      type: "File",
-      size: "2.1 MB",
-      uploaded: "14 Jun 2024",
-    },
-  ];
+  const [folderFiles, setFolderFiles] = useState([]);
+  const getFolderFiles = async () => {
+    try {
+      const response = await api.get(`/api/file/${folderId}`);
+      setFolderFiles(response.data.folderFiles);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getFolderFiles();
+  }, []);
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+  };
 
   return (
     <>
@@ -155,11 +144,11 @@ export default function FolderDetails() {
             </thead>
 
             <tbody>
-              {files.map((file) => (
-                <tr key={file.id} className="border-b last:border-none">
+              {folderFiles.map((file) => (
+                <tr key={file._id} className="border-b last:border-none">
                   <td className="p-4">
                     <div
-                      onClick={() => navigate(`/dashboard/file/${file.id}`)}
+                      onClick={() => navigate(`/dashboard/file/${file._id}`)}
                       className="flex items-center gap-3 cursor-pointer hover:text-blue-600"
                     >
                       {file.name.includes(".png") ? (
@@ -174,15 +163,17 @@ export default function FolderDetails() {
 
                   <td className="p-4">{file.type}</td>
 
-                  <td className="p-4">{file.size}</td>
+                  <td className="p-4">{formatFileSize(file.size)}</td>
 
-                  <td className="p-4">{file.uploaded}</td>
+                  <td className="p-4">
+                    {new Date(file.uploaded).toLocaleString()}
+                  </td>
 
                   <td className="p-4">
                     <div className="flex gap-3">
                       <Download size={18} />
 
-                      <MoreVertical size={18} />
+                      <Trash2 size={18} color="red" />
                     </div>
                   </td>
                 </tr>
@@ -194,13 +185,17 @@ export default function FolderDetails() {
         {/* Mobile */}
 
         <div className="md:hidden space-y-4">
-          {files.map((file) => (
-            <div key={file.id} className="bg-white border rounded-xl p-4">
+          {folderFiles.map((file) => (
+            <div key={file._id} className="bg-white border rounded-xl p-4">
               <h3 className="font-medium">{file.name}</h3>
 
-              <p className="text-sm text-gray-500 mt-2">{file.size}</p>
+              <p className="text-sm text-gray-500 mt-2">
+                {formatFileSize(file.size)}
+              </p>
 
-              <p className="text-sm text-gray-500">{file.uploaded}</p>
+              <p className="text-sm text-gray-500">
+                {new Date(file.uploaded).toLocaleString()}
+              </p>
 
               <button className="mt-3 text-blue-600 flex items-center gap-2">
                 <Download size={16} />
