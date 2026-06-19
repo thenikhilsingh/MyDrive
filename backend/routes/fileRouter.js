@@ -5,12 +5,14 @@ const {
   getFolderFiles,
   uploadFile,
   deleteFile,
+  getFileInfo,
 } = require("../controllers/fileController.js");
 const upload = require("../middlewares/multerMiddleware.js");
 
 const fileRouter = Router();
 
 fileRouter.get("/", authMiddleware, getFiles);
+fileRouter.get("/info/:id", authMiddleware, getFileInfo);
 fileRouter.get("/:id", authMiddleware, getFolderFiles);
 fileRouter.post("/upload", authMiddleware, upload.single("file"), uploadFile);
 fileRouter.delete("/delete/:id", authMiddleware, deleteFile);

@@ -10,7 +10,6 @@ import {
   Image,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumb from "../components/Breadcrumb";
 import RenameFolderModal from "../components/RenameFolderModal";
 import UploadFileModal from "../components/UploadFileModal";
 import useAxios from "../src/hooks/useAxios";
@@ -88,8 +87,6 @@ export default function FolderDetails() {
   return (
     <>
       <div className="space-y-6">
-        <Breadcrumb items={["All Files", "Documents"]} />
-
         {/* Header */}
 
         <div className="flex flex-col lg:flex-row justify-between gap-4">

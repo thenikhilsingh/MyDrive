@@ -1,20 +1,36 @@
 import { FileText, Download, Trash2, Folder } from "lucide-react";
-
-import Breadcrumb from "../components/Breadcrumb";
+import { useEffect, useState } from "react";
+import useAxios from "../src/hooks/useAxios";
+import { useParams } from "react-router-dom";
 
 export default function FileDetails() {
-  const file = {
-    name: "Resume.pdf",
-    size: "2.4 MB",
-    uploadedOn: "16 Jun 2024, 10:30 AM",
-    folder: "Documents",
-    type: "PDF Document",
+  const { fileId } = useParams();
+  const api = useAxios();
+  const [fileInfo, setFileInfo] = useState({});
+
+  const getFileInfo = async () => {
+    try {
+      const response = await api.get(`/api/file/info/${fileId}`);
+      setFileInfo(response.data.fileInfo);
+      console.log(response.data.fileInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getFileInfo();
+  }, []);
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={["All Files", "Documents", "Resume.pdf"]} />
-
       <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-10">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Preview Section */}
@@ -28,25 +44,25 @@ export default function FileDetails() {
 
           {/* Details Section */}
           <div className="flex-1">
-            <h1 className="text-3xl font-semibold">{file.name}</h1>
+            <h1 className="text-3xl font-semibold">{fileInfo.name}</h1>
 
             <div className="mt-8 space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <span className="text-gray-500">File Type</span>
 
-                <span>{file.type}</span>
+                <span>{fileInfo.type}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <span className="text-gray-500">File Size</span>
 
-                <span>{file.size}</span>
+                <span>{formatFileSize(fileInfo.size)}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <span className="text-gray-500">Uploaded On</span>
 
-                <span>{file.uploadedOn}</span>
+                <span>{new Date(fileInfo.uploaded).toLocaleString()}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -55,7 +71,7 @@ export default function FileDetails() {
                 <div className="flex items-center gap-2">
                   <Folder size={18} className="text-yellow-500" />
 
-                  {file.folder}
+                  {fileInfo.folder?.name}
                 </div>
               </div>
             </div>
