@@ -1,8 +1,13 @@
 import { X } from "lucide-react";
 import useAxios from "../src/hooks/useAxios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function UploadFileModal({ closeModal, folders, getFiles }) {
+export default function UploadFileModal({
+  closeModal,
+  folders,
+  getFiles,
+  folderId,
+}) {
   const api = useAxios();
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("");
@@ -16,9 +21,12 @@ export default function UploadFileModal({ closeModal, folders, getFiles }) {
       }
       const fileData = new FormData(); //ye uploded file ki information object me store kar deta h kyunki hum db me direct file nhi bhej sakte
       fileData.append("file", selectedFile);
-      if (selectedFolder) {
-        fileData.append("folderId", selectedFolder);
+
+      const activeFolderId = folderId || selectedFolder;
+      if (activeFolderId) {
+        fileData.append("folderId", activeFolderId);
       }
+
       const response = await api.post("/api/file/upload", fileData);
       if (response.status === 201) {
         getFiles();
@@ -59,26 +67,28 @@ export default function UploadFileModal({ closeModal, folders, getFiles }) {
             />
           </div>
 
-          <div>
-            <label className="block mb-2 text-sm font-medium">
-              Select Folder
-            </label>
+          {!folderId && (
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Select Folder
+              </label>
 
-            <select
-              className="w-full border rounded-lg p-3"
-              value={selectedFolder}
-              onChange={(e) => setSelectedFolder(e.target.value)}
-            >
-              <option value="">Select Folder</option>
-              {folders.map((folder) => {
-                return (
-                  <option key={folder._id} value={folder._id}>
-                    {folder.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+              <select
+                className="w-full border rounded-lg p-3"
+                value={selectedFolder}
+                onChange={(e) => setSelectedFolder(e.target.value)}
+              >
+                <option value="">Select Folder</option>
+                {folders?.map((folder) => {
+                  return (
+                    <option key={folder._id} value={folder._id}>
+                      {folder.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          )}
 
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-600">
             <p>Only PDF, JPG and PNG files are allowed.</p>

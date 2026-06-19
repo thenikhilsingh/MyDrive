@@ -213,7 +213,12 @@ export default function FolderDetails() {
       )}
 
       {showUploadModal && (
-        <UploadFileModal closeModal={() => setShowUploadModal(false)} />
+        <UploadFileModal
+          closeModal={() => setShowUploadModal(false)}
+          folderId={folderId}
+          folders={[]}
+          getFiles={getFolderFiles}
+        />
       )}
     </>
   );
