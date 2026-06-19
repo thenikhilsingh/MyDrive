@@ -5,6 +5,7 @@ const indexRouter = require("./routes/indexRouter");
 const authRouter = require("./routes/authRouter.js");
 const cors = require("cors");
 const folderRouter = require("./routes/folderRouter.js");
+const fileRouter = require("./routes/fileRouter.js");
 dotenv.config();
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/", indexRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/folder", folderRouter);
+app.use("/api/file", fileRouter);
 
 const PORT = process.env.PORT;
 connectDB().then(() => {
