@@ -114,7 +114,11 @@ function DashboardHome() {
       )}
 
       {showUploadModal && (
-        <UploadFileModal closeModal={() => setShowUploadModal(false)} />
+        <UploadFileModal
+          closeModal={() => setShowUploadModal(false)}
+          folders={folders}
+          getFiles={getFiles}
+        />
       )}
     </>
   );
