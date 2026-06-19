@@ -1,4 +1,6 @@
 const File = require("../models/file.js");
+const fs = require("fs");
+const path = require("path");
 
 const getFiles = async (req, res) => {
   try {
@@ -40,4 +42,31 @@ const uploadFile = async (req, res) => {
   }
 };
 
-module.exports = { getFiles, uploadFile };
+const deleteFile = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedFile = await File.findOneAndDelete({
+      _id: id,
+      uploadedBy: req.user._id,
+    });
+    if (!deletedFile) {
+      return res.status(404).json({
+        message: "File not found",
+      });
+    }
+    const filePath = path.join("public", deletedFile.fileUrl);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    res.status(200).json({
+      message: "File deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { getFiles, uploadFile, deleteFile };
