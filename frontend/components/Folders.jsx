@@ -1,33 +1,24 @@
+import { useEffect, useState } from "react";
 import FolderCard from "../components/FolderCard";
+import useAxios from "../src/hooks/useAxios";
 
 export default function Folders() {
-  const folders = [
-    {
-      id: 1,
-      name: "Documents",
-      items: 12,
-    },
-    {
-      id: 2,
-      name: "Images",
-      items: 18,
-    },
-    {
-      id: 3,
-      name: "Projects",
-      items: 7,
-    },
-    {
-      id: 4,
-      name: "Videos",
-      items: 9,
-    },
-    {
-      id: 5,
-      name: "Work",
-      items: 4,
-    },
-  ];
+  const api = useAxios();
+  const [folders, setFolders] = useState([]);
+
+  const getFolders = async () => {
+    try {
+      const response = await api.get("/api/folder/");
+      setFolders(response.data.allFolders);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getFolders();
+  }, []);
 
   return (
     <div>
@@ -35,7 +26,7 @@ export default function Folders() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
         {folders.map((folder) => (
-          <FolderCard key={folder.id} folder={folder} />
+          <FolderCard key={folder._id} folder={folder} />
         ))}
       </div>
     </div>
