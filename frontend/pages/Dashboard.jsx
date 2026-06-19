@@ -12,30 +12,6 @@ import { AuthContext } from "../src/App";
 import axios from "axios";
 import useAxios from "../src/hooks/useAxios.js";
 
-const files = [
-  {
-    id: 1,
-    name: "Resume.pdf",
-    type: "File",
-    size: "2.4 MB",
-    uploaded: "16 Jun 2024",
-  },
-  {
-    id: 2,
-    name: "Project Proposal.docx",
-    type: "File",
-    size: "1.3 MB",
-    uploaded: "15 Jun 2024",
-  },
-  {
-    id: 3,
-    name: "Photo.png",
-    type: "File",
-    size: "2.1 MB",
-    uploaded: "14 Jun 2024",
-  },
-];
-
 export default function Dashboard() {
   const { isLoggedIn } = useContext(AuthContext);
 
@@ -59,12 +35,21 @@ function DashboardHome() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const api = useAxios();
   const [folders, setFolders] = useState([]);
+  const [files, setFiles] = useState([]);
 
   const getFolders = async () => {
     try {
       const response = await api.get("/api/folder/");
       setFolders(response.data.allFolders);
-      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getFiles = async () => {
+    try {
+      const response = await api.get("/api/file/");
+      setFiles(response.data.files);
+      console.log(response.data.files);
     } catch (error) {
       console.log(error);
     }
@@ -72,6 +57,7 @@ function DashboardHome() {
 
   useEffect(() => {
     getFolders();
+    getFiles();
   }, []);
 
   return (
