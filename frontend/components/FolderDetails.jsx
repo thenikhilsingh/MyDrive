@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Folder,
   Upload,
@@ -13,11 +13,56 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import RenameFolderModal from "../components/RenameFolderModal";
 import UploadFileModal from "../components/UploadFileModal";
+import useAxios from "../src/hooks/useAxios";
+import { useParams } from "react-router-dom";
 
 export default function FolderDetails() {
   const [showRenameModal, setShowRenameModal] = useState(false);
-
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const { folderId } = useParams();
+  const api = useAxios();
+  const [folder, setFolder] = useState({});
+  const [folderName, setFolderName] = useState("");
+
+  const getFolder = async () => {
+    try {
+      const response = await api.get(`/api/folder/${folderId}`);
+      setFolder(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getFolder();
+  }, []);
+
+  const renameFolder = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.put(`/api/folder/rename/${folderId}`, {
+        name: folderName,
+      });
+      if (response.status === 200) {
+        getFolder();
+        setShowRenameModal(false);
+        setFolderName("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteFolder = async () => {
+    try {
+      const response = await api.delete(`/api/folder/delete/${folderId}`);
+      if (response.status === 200) {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const navigate = useNavigate();
   const files = [
@@ -62,7 +107,7 @@ export default function FolderDetails() {
           <div className="flex items-center gap-3">
             <Folder size={50} className="text-yellow-400 fill-yellow-300" />
 
-            <h1 className="text-3xl font-semibold">Documents</h1>
+            <h1 className="text-3xl font-semibold">{folder.name}</h1>
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -75,14 +120,20 @@ export default function FolderDetails() {
             </button>
 
             <button
-              onClick={() => setShowRenameModal(true)}
+              onClick={() => {
+                setFolderName(folder.name);
+                setShowRenameModal(true);
+              }}
               className="border px-5 py-2.5 rounded-lg flex items-center gap-2"
             >
               <Pencil size={18} />
               Rename
             </button>
 
-            <button className="border border-red-300 text-red-500 px-5 py-2.5 rounded-lg flex items-center gap-2">
+            <button
+              onClick={deleteFolder}
+              className="border border-red-300 text-red-500 px-5 py-2.5 rounded-lg flex items-center gap-2"
+            >
               <Trash2 size={18} />
               Delete
             </button>
@@ -162,8 +213,10 @@ export default function FolderDetails() {
 
       {showRenameModal && (
         <RenameFolderModal
-          currentName="Documents"
           closeModal={() => setShowRenameModal(false)}
+          folderName={folderName}
+          setFolderName={setFolderName}
+          handleSubmit={renameFolder}
         />
       )}
 

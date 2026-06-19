@@ -6,7 +6,7 @@ export default function FolderCard({ folder }) {
 
   return (
     <div
-      onClick={() => navigate(`/dashboard/folder/${folder.id}`)}
+      onClick={() => navigate(`/dashboard/folder/${folder._id}`)}
       className="bg-white border border-gray-200 rounded-xl p-5 cursor-pointer hover:shadow-md transition"
     >
       <Folder size={50} className="text-yellow-400 fill-yellow-300" />

@@ -1,9 +1,37 @@
 import { X } from "lucide-react";
+import useAxios from "../src/hooks/useAxios";
+import { useState } from "react";
 
-export default function CreateFolderModal({ closeModal }) {
+export default function CreateFolderModal({ closeModal, getFolders }) {
+  const [folderName, setFolderName] = useState("");
+  const api = useAxios();
+
+  const handleChange = (e) => {
+    setFolderName(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/api/folder/create", {
+        name: folderName,
+      });
+      if (response.status === 201) {
+        setFolderName("");
+        getFolders();
+        closeModal();
+      }
+    } catch (error) {
+      console.log(object);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50 p-4">
-      <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+      <form
+        className="bg-white w-full max-w-md rounded-xl shadow-lg p-6"
+        onSubmit={handleSubmit}
+      >
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Create Folder</h2>
 
@@ -19,6 +47,9 @@ export default function CreateFolderModal({ closeModal }) {
             type="text"
             placeholder="Enter folder name"
             className="w-full border border-gray-200 rounded-lg px-4 py-3"
+            name="name"
+            value={folderName}
+            onChange={handleChange}
           />
         </div>
 
@@ -27,11 +58,14 @@ export default function CreateFolderModal({ closeModal }) {
             Cancel
           </button>
 
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+          >
             Create
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

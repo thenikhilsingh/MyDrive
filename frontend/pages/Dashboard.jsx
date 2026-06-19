@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Search, Upload } from "lucide-react";
 import { Navigate, Outlet } from "react-router-dom";
 
@@ -9,29 +9,8 @@ import FileTable from "../components/FileTable";
 import CreateFolderModal from "../components/CreateFolderModal";
 import UploadFileModal from "../components/UploadFileModal";
 import { AuthContext } from "../src/App";
-
-const folders = [
-  {
-    id: 1,
-    name: "Documents",
-    items: 12,
-  },
-  {
-    id: 2,
-    name: "Images",
-    items: 18,
-  },
-  {
-    id: 3,
-    name: "Projects",
-    items: 7,
-  },
-  {
-    id: 4,
-    name: "Videos",
-    items: 9,
-  },
-];
+import axios from "axios";
+import useAxios from "../src/hooks/useAxios.js";
 
 const files = [
   {
@@ -78,6 +57,22 @@ export default function Dashboard() {
 function DashboardHome() {
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const api = useAxios();
+  const [folders, setFolders] = useState([]);
+
+  const getFolders = async () => {
+    try {
+      const response = await api.get("/api/folder/");
+      setFolders(response.data.allFolders);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getFolders();
+  }, []);
 
   return (
     <>
@@ -117,7 +112,7 @@ function DashboardHome() {
         {/* Folder Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
           {folders.map((folder) => (
-            <FolderCard key={folder.id} folder={folder} />
+            <FolderCard key={folder._id} folder={folder} />
           ))}
         </div>
 
@@ -126,7 +121,10 @@ function DashboardHome() {
       </div>
 
       {showCreateFolder && (
-        <CreateFolderModal closeModal={() => setShowCreateFolder(false)} />
+        <CreateFolderModal
+          closeModal={() => setShowCreateFolder(false)}
+          getFolders={getFolders}
+        />
       )}
 
       {showUploadModal && (

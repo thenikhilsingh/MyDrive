@@ -1,9 +1,17 @@
 import { X } from "lucide-react";
 
-export default function RenameFolderModal({ closeModal, currentName }) {
+export default function RenameFolderModal({
+  closeModal,
+  folderName,
+  setFolderName,
+  handleSubmit,
+}) {
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50 p-4">
-      <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+      <form
+        className="bg-white w-full max-w-md rounded-xl shadow-lg p-6"
+        onSubmit={handleSubmit}
+      >
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Rename Folder</h2>
 
@@ -16,8 +24,10 @@ export default function RenameFolderModal({ closeModal, currentName }) {
           <label className="block mb-2 text-sm font-medium">Folder Name</label>
 
           <input
-            defaultValue={currentName}
             className="w-full border border-gray-200 rounded-lg px-4 py-3"
+            name="name"
+            value={folderName}
+            onChange={(e) => setFolderName(e.target.value)}
           />
         </div>
 
@@ -26,11 +36,14 @@ export default function RenameFolderModal({ closeModal, currentName }) {
             Cancel
           </button>
 
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+          >
             Update
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

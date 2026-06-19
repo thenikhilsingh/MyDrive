@@ -15,6 +15,24 @@ const getFolders = async (req, res) => {
   }
 };
 
+const getFolderById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const folder = await Folder.findOne({
+      _id: id,
+      createdBy: req.user._id,
+    });
+
+    if (!folder) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    res.status(200).json(folder);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createFolder = async (req, res) => {
   try {
     const { name } = req.body;
@@ -72,4 +90,10 @@ const deleteFolder = async (req, res) => {
   }
 };
 
-module.exports = { getFolders, createFolder, renameFolder, deleteFolder };
+module.exports = {
+  getFolders,
+  getFolderById,
+  createFolder,
+  renameFolder,
+  deleteFolder,
+};
