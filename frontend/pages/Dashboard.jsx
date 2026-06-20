@@ -60,6 +60,17 @@ function DashboardHome() {
     getFiles();
   }, []);
 
+  const deleteFile = async (id) => {
+    try {
+      const response = await api.delete(`/api/file/delete/${id}`);
+      if (response.status === 200) {
+        getFiles();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="space-y-6">
@@ -103,7 +114,7 @@ function DashboardHome() {
         </div>
 
         {/* File Table */}
-        <FileTable files={files} />
+        <FileTable files={files} deleteFile={deleteFile} />
       </div>
 
       {showCreateFolder && (

@@ -1,4 +1,7 @@
 const Folder = require("../models/folder");
+const File = require("../models/file.js");
+const fs = require("fs");
+const path = require("path");
 
 const getFolders = async (req, res) => {
   try {
@@ -77,16 +80,34 @@ const renameFolder = async (req, res) => {
 const deleteFolder = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedFolder = await Folder.findByIdAndDelete({
+    const deletedFolder = await Folder.findOneAndDelete({
       _id: id,
       createdBy: req.user._id,
+    });
+    const FilesInsideTheFolder = await File.find({
+      folder: id,
+      uploadedBy: req.user._id,
+    });
+
+    FilesInsideTheFolder.forEach((file) => {
+      const filePath = path.join("public", file.fileUrl);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    });
+    const deletedFilesInsideTheFolder = await File.deleteMany({
+      folder: id,
+      uploadedBy: req.user._id,
     });
     res.status(200).json({
       message: "Folder deleted successfully",
       deletedFolder,
+      deletedFilesInsideTheFolder,
     });
   } catch (error) {
-    res.status(400).json({ message: "folder deletion failed" });
+    res
+      .status(400)
+      .json({ message: "folder deletion failed", error: error.message });
   }
 };
 

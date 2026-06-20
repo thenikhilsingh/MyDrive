@@ -84,6 +84,17 @@ export default function FolderDetails() {
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
+  const deleteFile = async (id) => {
+    try {
+      const response = await api.delete(`/api/file/delete/${id}`);
+      if (response.status === 200) {
+        getFolderFiles();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="space-y-6">
@@ -168,9 +179,14 @@ export default function FolderDetails() {
 
                   <td className="p-4">
                     <div className="flex gap-3">
-                      <Download size={18} />
+                      <Download className="cursor-pointer" size={18} />
 
-                      <Trash2 size={18} color="red" />
+                      <Trash2
+                        onClick={() => deleteFile(file._id)}
+                        className="cursor-pointer"
+                        size={18}
+                        color="red"
+                      />
                     </div>
                   </td>
                 </tr>
