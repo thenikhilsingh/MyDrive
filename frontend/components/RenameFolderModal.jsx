@@ -5,6 +5,7 @@ export default function RenameFolderModal({
   folderName,
   setFolderName,
   handleSubmit,
+  loading,
 }) {
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50 p-4">
@@ -15,7 +16,7 @@ export default function RenameFolderModal({
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Rename Folder</h2>
 
-          <button onClick={closeModal}>
+          <button type="button" onClick={closeModal}>
             <X />
           </button>
         </div>
@@ -32,7 +33,11 @@ export default function RenameFolderModal({
         </div>
 
         <div className="flex justify-end gap-3 mt-8">
-          <button onClick={closeModal} className="border px-5 py-2 rounded-lg">
+          <button
+            type="button"
+            onClick={closeModal}
+            className="border px-5 py-2 rounded-lg"
+          >
             Cancel
           </button>
 
@@ -40,7 +45,11 @@ export default function RenameFolderModal({
             type="submit"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg"
           >
-            Update
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Update"
+            )}
           </button>
         </div>
       </form>

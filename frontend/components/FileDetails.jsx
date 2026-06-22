@@ -8,14 +8,18 @@ export default function FileDetails() {
   const api = useAxios();
   const [fileInfo, setFileInfo] = useState({});
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const getFileInfo = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`/api/file/info/${fileId}`);
       setFileInfo(response.data.fileInfo);
       console.log(response.data.fileInfo);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,7 +111,11 @@ export default function FileDetails() {
             {/* Buttons */}
 
             <div className="flex flex-col sm:flex-row gap-4 mt-10">
-              <a href={fileInfo.fileUrl} target="_blank" download={fileInfo.name}>
+              <a
+                href={fileInfo.fileUrl}
+                target="_blank"
+                download={fileInfo.name}
+              >
                 <button
                   // onClick={() => downloadFile(fileInfo._id, fileInfo.name)}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2"
@@ -121,8 +129,14 @@ export default function FileDetails() {
                 onClick={() => deleteFile(fileInfo._id)}
                 className="border border-red-300 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg flex items-center justify-center gap-2"
               >
-                <Trash2 size={18} />
-                Delete File
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <Trash2 size={18} />
+                    Delete File
+                  </>
+                )}
               </button>
             </div>
           </div>

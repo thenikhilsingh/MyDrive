@@ -83,14 +83,6 @@ export default function Sidebar() {
             <Folder size={18} />
             Folders
           </NavLink>
-
-          <NavLink
-            to="/dashboard/trash"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100"
-          >
-            <Trash2 size={18} />
-            Trash
-          </NavLink>
         </nav>
 
         {/* Logout */}

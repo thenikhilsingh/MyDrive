@@ -36,7 +36,7 @@ function DashboardHome() {
   const api = useAxios();
   const [folders, setFolders] = useState([]);
   const [files, setFiles] = useState([]);
-
+  const [deletingFileId, setDeletingFileId] = useState(null);
   const getFolders = async () => {
     try {
       const response = await api.get("/api/folder/");
@@ -78,12 +78,15 @@ function DashboardHome() {
 
   const deleteFile = async (id) => {
     try {
+      setDeletingFileId(id);
       const response = await api.delete(`/api/file/delete/${id}`);
       if (response.status === 200) {
         getFiles();
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setDeletingFileId(null);
     }
   };
 
@@ -134,6 +137,7 @@ function DashboardHome() {
           files={files}
           // DownloadFile={DownloadFile}
           deleteFile={deleteFile}
+          deletingFileId={deletingFileId}
         />
       </div>
 

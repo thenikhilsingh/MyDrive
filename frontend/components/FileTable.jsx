@@ -1,7 +1,7 @@
 import { Trash2, Download, FileText, Image, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function FileTable({ files, deleteFile }) {
+export default function FileTable({ files, deleteFile, deletingFileId }) {
   const navigate = useNavigate();
 
   const formatFileSize = (bytes) => {
@@ -51,12 +51,16 @@ export default function FileTable({ files, deleteFile }) {
                 <a href={file.fileUrl} target="_blank" download={file.name}>
                   <Download className="cursor-pointer" size={18} />
                 </a>
-                <Trash2
-                  onClick={() => deleteFile(file._id)}
-                  className="cursor-pointer"
-                  size={18}
-                  color="red"
-                />
+                {deletingFileId === file._id ? (
+                  <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Trash2
+                    onClick={() => deleteFile(file._id)}
+                    className="cursor-pointer"
+                    size={18}
+                    color="red"
+                  />
+                )}
               </td>
             </tr>
           ))}

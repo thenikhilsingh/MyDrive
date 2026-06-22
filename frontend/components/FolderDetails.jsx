@@ -16,6 +16,9 @@ import useAxios from "../src/hooks/useAxios";
 import { useParams } from "react-router-dom";
 
 export default function FolderDetails() {
+  const [loading, setLoading] = useState(false);
+  const [deletingFileId, setDeletingFileId] = useState(null);
+  const [deletingFolder, setDeletingFolder] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const { folderId } = useParams();
@@ -39,6 +42,7 @@ export default function FolderDetails() {
   const renameFolder = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await api.put(`/api/folder/rename/${folderId}`, {
         name: folderName,
       });
@@ -49,17 +53,22 @@ export default function FolderDetails() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteFolder = async () => {
     try {
+      setDeletingFolder(true);
       const response = await api.delete(`/api/folder/delete/${folderId}`);
       if (response.status === 200) {
         navigate("/dashboard");
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setDeletingFolder(false);
     }
   };
 
@@ -100,12 +109,15 @@ export default function FolderDetails() {
   // };
   const deleteFile = async (id) => {
     try {
+      setDeletingFileId(id);
       const response = await api.delete(`/api/file/delete/${id}`);
       if (response.status === 200) {
         getFolderFiles();
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setDeletingFileId(null);
     }
   };
 
@@ -145,8 +157,14 @@ export default function FolderDetails() {
               onClick={deleteFolder}
               className="border border-red-300 text-red-500 px-5 py-2.5 rounded-lg flex items-center gap-2"
             >
-              <Trash2 size={18} />
-              Delete
+              {deletingFolder ? (
+                <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <Trash2 size={18} />
+                  Delete
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -205,12 +223,16 @@ export default function FolderDetails() {
                         />
                       </a>
 
-                      <Trash2
-                        onClick={() => deleteFile(file._id)}
-                        className="cursor-pointer"
-                        size={18}
-                        color="red"
-                      />
+                      {deletingFileId === file._id ? (
+                        <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Trash2
+                          onClick={() => deleteFile(file._id)}
+                          className="cursor-pointer"
+                          size={18}
+                          color="red"
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -234,13 +256,15 @@ export default function FolderDetails() {
                 {new Date(file.uploaded).toLocaleString()}
               </p>
 
-              <button
-                onClick={() => DownloadFile(file._id, file.name)}
-                className="mt-3 text-blue-600 flex items-center gap-2"
-              >
-                <Download size={16} />
-                Download
-              </button>
+              <a href={file.fileUrl} target="_blank" download={file.name}>
+                <button
+                  // onClick={() => DownloadFile(file._id, file.name)}
+                  className="mt-3 text-blue-600 flex items-center gap-2"
+                >
+                  <Download size={16} />
+                  Download
+                </button>
+              </a>
             </div>
           ))}
         </div>
@@ -252,6 +276,7 @@ export default function FolderDetails() {
           folderName={folderName}
           setFolderName={setFolderName}
           handleSubmit={renameFolder}
+          loading={loading}
         />
       )}
 

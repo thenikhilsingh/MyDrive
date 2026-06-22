@@ -11,6 +11,7 @@ export default function UploadFileModal({
   const api = useAxios();
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -19,6 +20,7 @@ export default function UploadFileModal({
         alert("Please select a file");
         return;
       }
+      setLoading(true);
       const fileData = new FormData(); //ye uploded file ki information object me store kar deta h kyunki hum db me direct file nhi bhej sakte
       fileData.append("file", selectedFile);
 
@@ -37,6 +39,8 @@ export default function UploadFileModal({
       console.log("Folder:", selectedFolder);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,7 +110,11 @@ export default function UploadFileModal({
             type="submit"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg"
           >
-            Upload
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Upload"
+            )}
           </button>
         </div>
       </form>

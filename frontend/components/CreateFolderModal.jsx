@@ -3,6 +3,7 @@ import useAxios from "../src/hooks/useAxios";
 import { useState } from "react";
 
 export default function CreateFolderModal({ closeModal, getFolders }) {
+  const [loading, setLoading] = useState(false);
   const [folderName, setFolderName] = useState("");
   const api = useAxios();
 
@@ -13,6 +14,7 @@ export default function CreateFolderModal({ closeModal, getFolders }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await api.post("/api/folder/create", {
         name: folderName,
       });
@@ -22,7 +24,9 @@ export default function CreateFolderModal({ closeModal, getFolders }) {
         closeModal();
       }
     } catch (error) {
-      console.log(object);
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,7 +66,11 @@ export default function CreateFolderModal({ closeModal, getFolders }) {
             type="submit"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg"
           >
-            Create
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Create"
+            )}
           </button>
         </div>
       </form>
