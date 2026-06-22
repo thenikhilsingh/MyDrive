@@ -1,12 +1,13 @@
 import { FileText, Download, Trash2, Folder } from "lucide-react";
 import { useEffect, useState } from "react";
 import useAxios from "../src/hooks/useAxios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function FileDetails() {
   const { fileId } = useParams();
   const api = useAxios();
   const [fileInfo, setFileInfo] = useState({});
+  const navigate = useNavigate();
 
   const getFileInfo = async () => {
     try {
@@ -49,7 +50,7 @@ export default function FileDetails() {
     try {
       const response = await api.delete(`/api/file/delete/${id}`);
       if (response.status === 200) {
-        getFiles();
+        navigate(-1);
       }
     } catch (error) {
       console.log(error);
