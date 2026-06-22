@@ -77,6 +77,12 @@ const renameFolder = async (req, res) => {
   }
 };
 
+const getResourceType = (mimeType) => {
+  if (mimeType.startsWith("image")) return "image";
+  if (mimeType.startsWith("video")) return "video";
+
+  return "raw";
+};
 const deleteFolder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -89,12 +95,17 @@ const deleteFolder = async (req, res) => {
       uploadedBy: req.user._id,
     });
 
-    FilesInsideTheFolder.forEach((file) => {
-      const filePath = path.join("public", file.fileUrl);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    });
+    // FilesInsideTheFolder.forEach((file) => {
+    //   const filePath = path.join("public", file.fileUrl);
+    //   if (fs.existsSync(filePath)) {
+    //     fs.unlinkSync(filePath);
+    //   }
+    // });
+    for (const file of FilesInsideTheFolder) {
+      await cloudinary.uploader.destroy(file.publicId, {
+        resource_type: getResourceType(file.type),
+      });
+    }
     const deletedFilesInsideTheFolder = await File.deleteMany({
       folder: id,
       uploadedBy: req.user._id,
