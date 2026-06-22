@@ -2,7 +2,7 @@ const Folder = require("../models/folder");
 const File = require("../models/file.js");
 const fs = require("fs");
 const path = require("path");
-const cloudinary = require("../utils/cloudinary.js");
+const { cloudinary } = require("../utils/cloudinary.js");
 
 const getFolders = async (req, res) => {
   try {
