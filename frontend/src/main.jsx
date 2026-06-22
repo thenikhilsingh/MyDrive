@@ -17,7 +17,6 @@ import FolderDetails from "../components/FolderDetails.jsx";
 import FileDetails from "../components/FileDetails.jsx";
 import SharedFolder from "../components/SharedFolder.jsx";
 import Folders from "../components/Folders.jsx";
-import Profile from "../components/Profile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,7 +25,6 @@ const router = createBrowserRouter(
       <Route path="signup" element={<Signup />}></Route>
       <Route path="dashboard" element={<Dashboard />}>
         <Route index element={<DashboardHome />} />
-        <Route path="profile" element={<Profile />} />
         <Route path="folders" element={<Folders />} />
         <Route path="folder/:folderId" element={<FolderDetails />} />
         <Route path="file/:fileId" element={<FileDetails />} />

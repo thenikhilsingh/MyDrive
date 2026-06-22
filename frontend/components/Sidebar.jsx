@@ -65,18 +65,6 @@ export default function Sidebar() {
           </NavLink>
 
           <NavLink
-            to="/dashboard/profile"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-lg ${
-                isActive ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100"
-              }`
-            }
-          >
-            <User size={18} />
-            Profile
-          </NavLink>
-
-          <NavLink
             to="/dashboard/folders"
             className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100"
           >

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Search, Upload } from "lucide-react";
+import { Search, Upload, Hand } from "lucide-react";
 import { Navigate, Outlet } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
@@ -31,6 +31,7 @@ export default function Dashboard() {
 }
 
 function DashboardHome() {
+  const { user } = useContext(AuthContext);
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const api = useAxios();
@@ -95,17 +96,21 @@ function DashboardHome() {
       <div className="space-y-6">
         {/* Top Bar */}
         <div className="flex flex-col md:flex-row gap-4 justify-between">
-          <div className="relative w-full md:w-96">
-            <Search
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
+          <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+              {user?.name
+                ?.split(" ")
+                .map((word) => word[0])
+                .slice(0, 2)
+                .join("")
+                .toUpperCase()}
+            </div>
 
-            <input
-              type="text"
-              placeholder="Search files and folders..."
-              className="w-full border border-gray-200 rounded-lg py-3 pl-10 pr-4 outline-none focus:border-blue-500"
-            />
+            <div>
+              <p className="text-sm font-medium text-gray-800 flex items-center gap-1">
+                Hello, {user?.name} <Hand size={18} />
+              </p>
+            </div>
           </div>
 
           <button
