@@ -18,6 +18,6 @@ folderRouter.post("/create", authMiddleware, createFolder);
 folderRouter.put("/rename/:id", authMiddleware, renameFolder);
 folderRouter.delete("/delete/:id", authMiddleware, deleteFolder);
 folderRouter.post("/share/:id", authMiddleware, shareFolderURLGenerate);
-router.get("/share/:shareToken", getSharedFolder);
+folderRouter.get("/share/:shareToken", getSharedFolder);
 
 module.exports = folderRouter;

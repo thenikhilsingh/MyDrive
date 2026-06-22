@@ -8,12 +8,14 @@ import {
   MoreVertical,
   FileText,
   Image,
+  Share2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import RenameFolderModal from "../components/RenameFolderModal";
 import UploadFileModal from "../components/UploadFileModal";
 import useAxios from "../src/hooks/useAxios";
 import { useParams } from "react-router-dom";
+import ShareFolderModal from "./ShareFolderModal";
 
 export default function FolderDetails() {
   const [loading, setLoading] = useState(false);
@@ -21,6 +23,7 @@ export default function FolderDetails() {
   const [deletingFolder, setDeletingFolder] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { folderId } = useParams();
   const api = useAxios();
   const [folder, setFolder] = useState({});
@@ -152,7 +155,13 @@ export default function FolderDetails() {
               <Pencil size={18} />
               Rename
             </button>
-
+            <button
+              onClick={() => setShowShareModal(true)}
+              className="border border-green-500 text-green-600 px-5 py-2.5 rounded-lg flex items-center gap-2"
+            >
+              <Share2 size={18} />
+              Share
+            </button>
             <button
               onClick={deleteFolder}
               className="border border-red-300 text-red-500 px-5 py-2.5 rounded-lg flex items-center gap-2"
@@ -286,6 +295,13 @@ export default function FolderDetails() {
           folderId={folderId}
           folders={[]}
           getFiles={getFolderFiles}
+        />
+      )}
+
+      {showShareModal && (
+        <ShareFolderModal
+          folderId={folderId}
+          closeModal={() => setShowShareModal(false)}
         />
       )}
     </>

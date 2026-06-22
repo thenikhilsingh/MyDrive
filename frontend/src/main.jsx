@@ -29,7 +29,7 @@ const router = createBrowserRouter(
         <Route path="folder/:folderId" element={<FolderDetails />} />
         <Route path="file/:fileId" element={<FileDetails />} />
       </Route>
-      <Route path="share/:shareId" element={<SharedFolder />} />
+      <Route path="share/:shareToken" element={<SharedFolder />} />
       <Route path="logout" element={<Logout />}></Route>
       <Route path="*" element={<Error />}></Route>
     </Route>,

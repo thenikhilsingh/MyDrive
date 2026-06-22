@@ -174,7 +174,7 @@ const getSharedFolder = async (req, res) => {
 
     const folder = await Folder.findOne({
       shareToken: shareToken,
-    });
+    }).populate("createdBy", "name");
 
     if (!folder) {
       return res.status(404).json({
@@ -192,7 +192,7 @@ const getSharedFolder = async (req, res) => {
       folder: folder._id,
     });
 
-    res.status(200).json({ files });
+    res.status(200).json({ folder, files });
   } catch (error) {
     res.status(500).json({
       message: error.message,
