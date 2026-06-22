@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { CloudUpload, Eye, EyeOff } from "lucide-react";
 import { useContext, useState } from "react";
 import axios from "axios";
@@ -8,7 +8,7 @@ export default function Login() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const { storeTokenInLS } = useContext(AuthContext);
+  const { storeTokenInLS, isLoggedIn } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -38,6 +38,9 @@ export default function Login() {
     }
   };
 
+  if (isLoggedIn) {
+    return <Navigate to="/dashboard" />;
+  }
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden">
