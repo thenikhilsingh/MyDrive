@@ -40,22 +40,63 @@ const getFileInfo = async (req, res) => {
   }
 };
 
+// const uploadFile = async (req, res) => {
+//   try {
+//     // Check file exists
+//     if (!req.file) {
+//       return res.status(400).json({
+//         message: "Please upload a file",
+//       });
+//     }
+
+//     const newFile = await File.create({
+//       name: req.file.originalname,
+//       type: req.file.mimetype,
+//       size: req.file.size,
+//       fileUrl: `/uploads/${req.file.filename}`, //local file path
+//       publicId: req.file.filename, //temporary for local storage
+//       uploadedBy: req.user._id,
+//       folder: req.body.folderId,
+//     });
+
+//     res.status(201).json({
+//       message: "File uploaded successfully",
+//       file: newFile,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Internal server error",
+//     });
+//   }
+// };
 const uploadFile = async (req, res) => {
   try {
-    // Check file exists
-    if (!req.file) {
+    const localPath = req.file?.path;
+
+    if (!localPath) {
       return res.status(400).json({
-        message: "Please upload a file",
+        success: false,
+        message: "No file uploaded",
       });
     }
 
+    const uploadedFile = await uploadOnCloudinary(localPath);
+    if (!uploadedFile) {
+      return res.status(400).json({
+        message: "Upload failed",
+      });
+    }
     const newFile = await File.create({
       name: req.file.originalname,
       type: req.file.mimetype,
       size: req.file.size,
-      fileUrl: `/uploads/${req.file.filename}`, //local file path
-      publicId: req.file.filename, //temporary for local storage
+
+      fileUrl: uploadedFile.secure_url, //only changed this
+
+      publicId: uploadedFile.public_id, //only changed this
+
       uploadedBy: req.user._id,
+
       folder: req.body.folderId,
     });
 
