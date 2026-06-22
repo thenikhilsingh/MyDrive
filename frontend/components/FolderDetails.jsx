@@ -84,20 +84,20 @@ export default function FolderDetails() {
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
-  const DownloadFile = async (id, fileName) => {
-    try {
-      const response = await api.get(`/api/file/download/${id}`, {
-        responseType: "blob",
-      });
-      const url = URL.createObjectURL(response.data);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      a.click();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const DownloadFile = async (id, fileName) => {
+  //   try {
+  //     const response = await api.get(`/api/file/download/${id}`, {
+  //       responseType: "blob",
+  //     });
+  //     const url = URL.createObjectURL(response.data);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = fileName;
+  //     a.click();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const deleteFile = async (id) => {
     try {
       const response = await api.delete(`/api/file/delete/${id}`);
@@ -193,11 +193,17 @@ export default function FolderDetails() {
 
                   <td className="p-4">
                     <div className="flex gap-3">
-                      <Download
-                        onClick={() => DownloadFile(file._id, file.name)}
-                        className="cursor-pointer"
-                        size={18}
-                      />
+                      <a
+                        href={file.fileUrl}
+                        target="_blank"
+                        download={file.name}
+                      >
+                        <Download
+                          // onClick={() => DownloadFile(file._id, file.name)}
+                          className="cursor-pointer"
+                          size={18}
+                        />
+                      </a>
 
                       <Trash2
                         onClick={() => deleteFile(file._id)}

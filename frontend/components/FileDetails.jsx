@@ -30,21 +30,21 @@ export default function FileDetails() {
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
-  const downloadFile = async (id, fileName) => {
-    try {
-      const response = await api.get(`/api/file/download/${id}`, {
-        responseType: "blob",
-      });
+  // const downloadFile = async (id, fileName) => {
+  //   try {
+  //     const response = await api.get(`/api/file/download/${id}`, {
+  //       responseType: "blob",
+  //     });
 
-      const url = URL.createObjectURL(response.data);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      a.click();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     const url = URL.createObjectURL(response.data);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = fileName;
+  //     a.click();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const deleteFile = async (id) => {
     try {
@@ -107,13 +107,15 @@ export default function FileDetails() {
             {/* Buttons */}
 
             <div className="flex flex-col sm:flex-row gap-4 mt-10">
-              <button
-                onClick={() => downloadFile(fileInfo._id, fileInfo.name)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2"
-              >
-                <Download size={18} />
-                Download File
-              </button>
+              <a href={fileInfo.fileUrl} target="_blank" download={fileInfo.name}>
+                <button
+                  // onClick={() => downloadFile(fileInfo._id, fileInfo.name)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2"
+                >
+                  <Download size={18} />
+                  Download File
+                </button>
+              </a>
 
               <button
                 onClick={() => deleteFile(fileInfo._id)}

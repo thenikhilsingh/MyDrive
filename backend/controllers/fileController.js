@@ -203,5 +203,5 @@ module.exports = {
   uploadFile,
   deleteFile,
   getFileInfo,
-  downloadFile,
+  // downloadFile,
 };
