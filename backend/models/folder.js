@@ -11,6 +11,15 @@ const folderSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    shareToken: {
+      type: String,
+      default: null,
+    },
+
+    shareExpiresAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
