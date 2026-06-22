@@ -168,6 +168,38 @@ const shareFolderURLGenerate = async (req, res) => {
   }
 };
 
+const getSharedFolder = async (req, res) => {
+  try {
+    const { shareToken } = req.params;
+
+    const folder = await Folder.findOne({
+      shareToken: shareToken,
+    });
+
+    if (!folder) {
+      return res.status(404).json({
+        message: "Invalid share link",
+      });
+    }
+
+    if (folder.shareExpiresAt && folder.shareExpiresAt < new Date()) {
+      return res.status(400).json({
+        message: "Share link has expired",
+      });
+    }
+
+    const files = await File.find({
+      folder: folder._id,
+    });
+
+    res.status(200).json({ files });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getFolders,
   getFolderById,
@@ -175,4 +207,5 @@ module.exports = {
   renameFolder,
   deleteFolder,
   shareFolderURLGenerate,
+  getSharedFolder,
 };
