@@ -3,6 +3,7 @@ const File = require("../models/file.js");
 const fs = require("fs");
 const path = require("path");
 const { cloudinary } = require("../utils/cloudinary.js");
+const crypto = require("crypto");
 
 const getFolders = async (req, res) => {
   try {
@@ -123,10 +124,55 @@ const deleteFolder = async (req, res) => {
   }
 };
 
+const shareFolderURLGenerate = async (req, res) => {
+  try {
+    const { id } = req.params; // folder id
+    const { duration } = req.body; // days
+
+    if (!duration || duration <= 0) {
+      return res.status(400).json({
+        message: "Please provide a valid duration",
+      });
+    }
+
+    const shareToken = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + duration * 24 * 60 * 60 * 1000); //convert days in milli seconds
+
+    const updatedFolder = await Folder.findOneAndUpdate(
+      {
+        _id: id,
+        createdBy: req.user._id,
+      },
+      {
+        shareToken,
+        shareExpiresAt: expiresAt,
+      },
+      {
+        new: true, //updated document return karega
+      },
+    );
+    if (!updatedFolder) {
+      return res.status(404).json({
+        message: "Folder not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Share link generated",
+      shareLink: `${process.env.CLIENT_URL}/share/${shareToken}`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getFolders,
   getFolderById,
   createFolder,
   renameFolder,
   deleteFolder,
+  shareFolderURLGenerate,
 };
