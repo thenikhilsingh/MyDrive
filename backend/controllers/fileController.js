@@ -97,10 +97,33 @@ const deleteFile = async (req, res) => {
   }
 };
 
+const downloadFile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const file = await File.findOne({
+      _id: id,
+      uploadedBy: req.user._id,
+    });
+
+    if (!file) {
+      return res.status(404).json({
+        message: "File not found",
+      });
+    }
+    const filePath = `./public${file.fileUrl}`;
+    res.download(filePath, file.name);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getFiles,
   getFolderFiles,
   uploadFile,
   deleteFile,
   getFileInfo,
+  downloadFile,
 };

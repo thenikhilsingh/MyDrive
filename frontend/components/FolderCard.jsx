@@ -1,5 +1,7 @@
 import { Folder } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useAxios from "../src/hooks/useAxios";
+import { useState } from "react";
 
 export default function FolderCard({ folder }) {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ export default function FolderCard({ folder }) {
 
       <h3 className="font-medium mt-3">{folder.name}</h3>
 
-      <p className="text-sm text-gray-500">{folder.items} items</p>
+      {/* <p className="text-sm text-gray-500"> items</p> */}
     </div>
   );
 }

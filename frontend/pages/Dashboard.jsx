@@ -60,6 +60,22 @@ function DashboardHome() {
     getFiles();
   }, []);
 
+  const DownloadFile = async (id, fileName) => {
+    try {
+      const response = await api.get(`/api/file/download/${id}`, {
+        responseType: "blob", //responseType: "blob" is used to tell Axios to treat the response as binary file data instead of JSON or text, allowing files such as PDFs, images, and documents to be downloaded correctly.
+      });
+
+      const url = URL.createObjectURL(response.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const deleteFile = async (id) => {
     try {
       const response = await api.delete(`/api/file/delete/${id}`);
@@ -114,7 +130,11 @@ function DashboardHome() {
         </div>
 
         {/* File Table */}
-        <FileTable files={files} deleteFile={deleteFile} />
+        <FileTable
+          files={files}
+          DownloadFile={DownloadFile}
+          deleteFile={deleteFile}
+        />
       </div>
 
       {showCreateFolder && (

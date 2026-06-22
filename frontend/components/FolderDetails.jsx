@@ -84,6 +84,20 @@ export default function FolderDetails() {
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
+  const DownloadFile = async (id, fileName) => {
+    try {
+      const response = await api.get(`/api/file/download/${id}`, {
+        responseType: "blob",
+      });
+      const url = URL.createObjectURL(response.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const deleteFile = async (id) => {
     try {
       const response = await api.delete(`/api/file/delete/${id}`);
@@ -179,7 +193,11 @@ export default function FolderDetails() {
 
                   <td className="p-4">
                     <div className="flex gap-3">
-                      <Download className="cursor-pointer" size={18} />
+                      <Download
+                        onClick={() => DownloadFile(file._id, file.name)}
+                        className="cursor-pointer"
+                        size={18}
+                      />
 
                       <Trash2
                         onClick={() => deleteFile(file._id)}
@@ -210,7 +228,10 @@ export default function FolderDetails() {
                 {new Date(file.uploaded).toLocaleString()}
               </p>
 
-              <button className="mt-3 text-blue-600 flex items-center gap-2">
+              <button
+                onClick={() => DownloadFile(file._id, file.name)}
+                className="mt-3 text-blue-600 flex items-center gap-2"
+              >
                 <Download size={16} />
                 Download
               </button>

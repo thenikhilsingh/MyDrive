@@ -29,6 +29,33 @@ export default function FileDetails() {
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
+  const downloadFile = async (id, fileName) => {
+    try {
+      const response = await api.get(`/api/file/download/${id}`, {
+        responseType: "blob",
+      });
+
+      const url = URL.createObjectURL(response.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteFile = async (id) => {
+    try {
+      const response = await api.delete(`/api/file/delete/${id}`);
+      if (response.status === 200) {
+        getFiles();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-10">
@@ -79,12 +106,18 @@ export default function FileDetails() {
             {/* Buttons */}
 
             <div className="flex flex-col sm:flex-row gap-4 mt-10">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2">
+              <button
+                onClick={() => downloadFile(fileInfo._id, fileInfo.name)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2"
+              >
                 <Download size={18} />
                 Download File
               </button>
 
-              <button className="border border-red-300 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg flex items-center justify-center gap-2">
+              <button
+                onClick={() => deleteFile(fileInfo._id)}
+                className="border border-red-300 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg flex items-center justify-center gap-2"
+              >
                 <Trash2 size={18} />
                 Delete File
               </button>
