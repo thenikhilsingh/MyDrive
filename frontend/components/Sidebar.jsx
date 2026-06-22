@@ -77,7 +77,7 @@ export default function Sidebar() {
         <div className="mt-auto p-4 border-t">
           <button
             onClick={() => navigate("/logout")}
-            className="flex items-center gap-3 text-gray-600"
+            className="flex items-center gap-3 text-red-600 cursor-pointer"
           >
             <LogOut size={18} />
             Logout

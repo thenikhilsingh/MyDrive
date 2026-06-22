@@ -80,6 +80,25 @@ const uploadFile = async (req, res) => {
         message: "No file uploaded",
       });
     }
+    if (req.file.size > 5 * 1024 * 1024) {
+      return res.status(400).json({
+        success: false,
+        message: "file size exceeds 5 MB",
+      });
+    }
+
+    const allowedTypes = [
+      "application/pdf",
+      "image/jpg",
+      "image/png",
+      "image/jpeg",
+    ];
+
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({
+        message: "Only PDF and Images are allowed",
+      });
+    }
 
     const uploadedFile = await uploadOnCloudinary(localPath);
     if (!uploadedFile) {
