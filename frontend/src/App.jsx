@@ -1,10 +1,13 @@
 import { createContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
+import WaitingForBackend from "../components/WaitingForBackend";
 
 export const AuthContext = createContext();
 
 function App() {
+  const [backendReady, setBackendReady] = useState(false);
+  const [checkingBackend, setCheckingBackend] = useState(true);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [token, setToken] = useState(localStorage.getItem("token"));
 
@@ -39,8 +42,41 @@ function App() {
   };
 
   useEffect(() => {
-    getLoggedInUserData();
-  }, []);
+    if (token) {
+      getLoggedInUserData();
+    }
+  }, [token]);
+
+  const checkBackendHealth = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/health`);
+
+      if (response.status === 200) {
+        setBackendReady(true);
+        setCheckingBackend(false);
+      }
+    } catch (error) {
+      console.log(error?.response?.data || error.message);
+      setBackendReady(false);
+      setCheckingBackend(false);
+    }
+  };
+
+  useEffect(() => {
+    checkBackendHealth();
+
+    if (backendReady) return;
+
+    const interval = setInterval(() => {
+      checkBackendHealth();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [backendReady]);
+
+  if (checkingBackend || !backendReady) {
+    return <WaitingForBackend />;
+  }
   return (
     <>
       <AuthContext.Provider

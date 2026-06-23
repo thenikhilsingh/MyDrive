@@ -1,5 +1,8 @@
 const indexController = (req, res) => {
-  res.send("MyDrive API");
+  res.status(200).json({
+    success: true,
+    message: "Backend is running",
+  });
 };
 
 module.exports = indexController;

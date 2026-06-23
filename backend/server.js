@@ -17,7 +17,7 @@ app.use(
   }),
 );
 app.use(express.json());
-app.use("/", indexRouter);
+app.use("/api/health", indexRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/folder", folderRouter);
 app.use("/api/file", fileRouter);
